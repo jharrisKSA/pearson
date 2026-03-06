@@ -23,7 +23,7 @@
 
 <body>
 
-<button id="addCustomerBtn" style="display:none;">
+<button id="addCustomerBtn">
 Add New Customer
 </button>
 
@@ -43,6 +43,7 @@ Webex Desktop SDK
 Listens for call data updates
 */
 window.addEventListener("message", function(event) {
+console.log("message", event);
 
     if (!event.data) return;
 
@@ -54,12 +55,13 @@ window.addEventListener("message", function(event) {
 
         const customerFound = callVars.callAssociatedData.CustomerFound;
 
+/*
         if (customerFound === false || customerFound === "false") {
             btn.style.display = "inline-block";
         } else {
             btn.style.display = "none";
         }
-
+*/
     }
 
 });
