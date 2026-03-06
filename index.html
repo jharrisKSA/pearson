@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+
+<style>
+#addCustomerBtn{
+  background:#1976d2;
+  color:white;
+  border:none;
+  padding:8px 14px;
+  border-radius:4px;
+  font-size:13px;
+  cursor:pointer;
+}
+
+#addCustomerBtn:hover{
+  background:#1565c0;
+}
+</style>
+
+</head>
+
+<body>
+
+<button id="addCustomerBtn" style="display:none;">
+Add New Customer
+</button>
+
+<script>
+
+const bcUrl = "https://businesscentral.yourdomain.com/...NEW CUSTOMER URL...";
+
+const btn = document.getElementById("addCustomerBtn");
+
+btn.onclick = () => {
+    window.open(bcUrl, "_blank");
+};
+
+
+/*
+Webex Desktop SDK
+Listens for call data updates
+*/
+window.addEventListener("message", function(event) {
+
+    if (!event.data) return;
+
+    const data = event.data;
+
+    if (data.type === "interactionData") {
+
+        const callVars = data.interaction;
+
+        const customerFound = callVars.callAssociatedData.CustomerFound;
+
+        if (customerFound === false || customerFound === "false") {
+            btn.style.display = "inline-block";
+        } else {
+            btn.style.display = "none";
+        }
+
+    }
+
+});
+
+</script>
+
+</body>
+</html>
