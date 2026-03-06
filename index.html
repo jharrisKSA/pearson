@@ -4,14 +4,26 @@
 <meta charset="UTF-8">
 
 <style>
+html, body {
+  margin: 0;
+  padding: 0;
+  height: 64px;
+  display: flex;
+  align-items: center;
+  font-family: Arial, Helvetica, sans-serif;
+}
+
+/* Hidden until we determine CustomerFound */
 #addCustomerBtn{
-  background:#1976d2;
-  color:white;
-  border:none;
-  padding:8px 14px;
-  border-radius:4px;
-  font-size:13px;
-  cursor:pointer;
+  display: none;
+  background: #1976d2;
+  color: white;
+  border: none;
+  padding: 8px 14px;
+  border-radius: 4px;
+  font-size: 13px;
+  cursor: pointer;
+  white-space: nowrap;
 }
 
 #addCustomerBtn:hover{
@@ -29,40 +41,55 @@ Add New Customer
 
 <script>
 
-const bcUrl = "https://businesscentral.yourdomain.com/...NEW CUSTOMER URL...";
+const BUSINESS_CENTRAL_URL =
+"https://businesscentral.yourdomain.com/...NEW CUSTOMER URL...";
 
 const btn = document.getElementById("addCustomerBtn");
 
-btn.onclick = () => {
-    window.open(bcUrl, "_blank");
-};
+/* open BC page */
+btn.addEventListener("click", () => {
+  window.open(BUSINESS_CENTRAL_URL, "_blank");
+});
 
+/* helper: normalize boolean values */
+function isFalse(value){
+  return (
+    value === false ||
+    value === "false" ||
+    value === "False" ||
+    value === 0 ||
+    value === "0"
+  );
+}
 
-/*
-Webex Desktop SDK
-Listens for call data updates
-*/
-window.addEventListener("message", function(event) {
-console.log("message", event);
+/* show / hide button */
+function updateVisibility(customerFound){
+  if (isFalse(customerFound)){
+    btn.style.display = "inline-block";
+  } else {
+    btn.style.display = "none";
+  }
+}
 
-    if (!event.data) return;
+/* Listen for Webex interaction updates */
+window.addEventListener("message", function(event){
 
-    const data = event.data;
+  if (!event.data) return;
 
-    if (data.type === "interactionData") {
+  const data = event.data;
 
-        const callVars = data.interaction;
+  console.log("Webex message:", data);
 
-        const customerFound = callVars.callAssociatedData.CustomerFound;
+  if (data.type !== "interactionData") return;
 
-/*
-        if (customerFound === false || customerFound === "false") {
-            btn.style.display = "inline-block";
-        } else {
-            btn.style.display = "none";
-        }
-*/
-    }
+  const interaction = data.interaction || {};
+  const cad = interaction.callAssociatedData || {};
+
+  const customerFound = cad.CustomerFound;
+
+  console.log("CustomerFound:", customerFound);
+
+  updateVisibility(customerFound);
 
 });
 
