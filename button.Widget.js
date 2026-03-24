@@ -5,18 +5,55 @@ class AniHeaderButton extends HTMLElement {
     this.attachShadow({ mode: "open" });
   }
 
-  // 👇 THIS IS THE KEY PART
+  connectedCallback() {
+    this.render();
+    this.initialize();
+  }
+
+  async initialize() {
+    try {
+      // If your environment exposes the Desktop SDK globally, use it here.
+      // If bundling later, import { Desktop } from '@wxcc-desktop/sdk'
+      if (!window.Desktop) {
+        console.warn("Desktop SDK not found on window. Falling back to property binding only.");
+        return;
+      }
+
+      await window.Desktop.config.init();
+
+      const tasks = await window.Desktop.actions.getTasks();
+      const selectedTask = Array.isArray(tasks)
+        ? tasks.find(t => t.isSelected) || tasks[0]
+        : null;
+
+      this._ani =
+        selectedTask?.ani ||
+        selectedTask?.interaction?.ani ||
+        selectedTask?.data?.ani ||
+        "";
+
+      console.log("Initial ANI:", this._ani);
+
+      window.Desktop.agentContact.addEventListener("taskSelected", (event) => {
+        const task = event?.detail || {};
+        this._ani =
+          task?.ani ||
+          task?.interaction?.ani ||
+          task?.data?.ani ||
+          "";
+        console.log("Updated ANI from taskSelected:", this._ani);
+      });
+    } catch (err) {
+      console.error("Failed to initialize ANI widget:", err);
+    }
+  }
+
   set ani(value) {
     this._ani = value || "";
-    this.updateDisplay();
   }
 
   get ani() {
     return this._ani;
-  }
-
-  connectedCallback() {
-    this.render();
   }
 
   render() {
@@ -43,34 +80,18 @@ class AniHeaderButton extends HTMLElement {
         }
       </style>
 
-      <button id="aniBtn">Show ANI</button>
+      <button id="aniBtn" type="button">Show ANI</button>
     `;
 
-    this.shadowRoot.getElementById("aniBtn")
-      .addEventListener("click", () => {
-        
-
-      console.log("ALL VARIABLES (DIR)");
-      console.dir(window);
-
-      console.log("ALL VARIABLES (Window)");
-      for(var name in window){
-          console.log(name, window[name]);
-      }
-
-        
-        const value =
-          this._ani && !String(this._ani).startsWith("$STORE")
-            ? this._ani
-            : "No ANI available";
-
-        alert(`ANI / Phone Number: ${value}`);
-      });
-  }
-
-  updateDisplay() {
-    // Optional: log to verify updates
-    console.log("ANI updated:", this._ani);
+    this.shadowRoot.getElementById("aniBtn").addEventListener("click", () => {
+      console.log("this.ani property:", this.ani);
+      console.log("window.Desktop:", window.Desktop);
+      console.log("window.agentx:", window.agentx);
+      console.log("window.callingClient:", window.callingClient);
+      console.log("window.webexService:", window.webexService);
+      
+      alert(`ANI / Phone Number: ${this._ani || "No ANI available"}`);
+    });
   }
 }
 
