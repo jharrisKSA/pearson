@@ -2,47 +2,39 @@ class AniHeaderButton extends HTMLElement {
   constructor() {
     super();
     this._agentContact = null;
-    this._agent = null;
     this.attachShadow({ mode: "open" });
   }
 
   set agentContact(value) {
-    console.log("agentContact setter fired with:", value);
     this._agentContact = value || null;
+    console.log("agentContact setter fired with:", value);
   }
 
   get agentContact() {
     return this._agentContact;
   }
 
-  set agent(value) {
-    console.log("agent setter fired with:", value);
-    this._agent = value || null;
-  }
-
-  get agent() {
-    return this._agent;
-  }
-
   connectedCallback() {
     this.render();
 
     setTimeout(() => {
-      console.log("after connect this.agentContact:", this.agentContact);
-      console.log("after connect this.agent:", this.agent);
+      console.log("after connect this.agentContact", this.agentContact);
+      console.log("after connect taskSelected", this.agentContact?.taskSelected);
+      console.log("after connect contact", this.agentContact?.contact);
+      console.log("after connect agent", this.agent);
     }, 1000);
   }
 
   getAni() {
-    const ac = this.agentContact;
-    const task = ac?.taskSelected;
-    const contact = ac?.contact;
+    const task = this.agentContact?.taskSelected;
+    const contact = this.agentContact?.contact;
 
     return (
       task?.ani ||
       task?.interaction?.ani ||
       task?.contact?.ani ||
       task?.customerNumber ||
+      task?.destination ||
       contact?.ani ||
       contact?.customerNumber ||
       ""
@@ -77,12 +69,16 @@ class AniHeaderButton extends HTMLElement {
     `;
 
     this.shadowRoot.getElementById("aniBtn").addEventListener("click", () => {
+      const task = this.agentContact?.taskSelected;
+      const contact = this.agentContact?.contact;
       const ani = this.getAni();
+      const agent = this.agent;
 
-      console.log("taskSelected:", this.agentContact?.taskSelected);
-      console.log("contact:", this.agentContact?.contact);
+      console.log("taskSelected:", task);
+      console.log("contact:", contact);
       console.log("resolved ani:", ani);
-
+      console.log("agent:", agent);
+      
       alert(`ANI / Phone Number: ${ani || "No ANI available"}`);
     });
   }
