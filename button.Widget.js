@@ -165,33 +165,33 @@ class AniHeaderButton extends HTMLElement {
         }
 
         button.contact {
- appearance: button;
- background-color: #1899D6;
- border: solid transparent;
- border-radius: 16px;
- border-width: 0 0 4px;
- box-sizing: border-box;
- color: #FFFFFF;
- cursor: pointer;
- display: inline-block;
- font-size: 13px;
- font-weight: 700;
- letter-spacing: .8px;
- line-height: 15px;
- margin: 0;
- outline: none;
- overflow: visible;
- padding: 6px 12px;
- text-align: center;
- text-transform: uppercase;
- touch-action: manipulation;
- transform: translateZ(0);
- transition: filter .2s;
- user-select: none;
- -webkit-user-select: none;
- vertical-align: middle;
- white-space: nowrap;
-}
+            appearance: button;
+            background-color: #1899D6;
+            border: solid transparent;
+            border-radius: 16px;
+            border-width: 0 0 4px;
+            box-sizing: border-box;
+            color: #FFFFFF;
+            cursor: pointer;
+            display: inline-block;
+            font-size: 14px;
+            font-weight: 700;
+            letter-spacing: .8px;
+            line-height: 24px;
+            margin: 0;
+            outline: none;
+            overflow: visible;
+            padding: 6px 10px;
+            text-align: center;
+            text-transform: uppercase;
+            touch-action: manipulation;
+            transform: translateZ(0);
+            transition: filter .2s;
+            user-select: none;
+            -webkit-user-select: none;
+            vertical-align: middle;
+            white-space: nowrap;
+        }
 
 button.contact:after {
  background-clip: padding-box;
