@@ -2,15 +2,15 @@ class AniHeaderButton extends HTMLElement {
   constructor() {
     super();
     this._agentContact = null;
+    this._agent = null;
     this._ani = "";
+    this._userFound = null;
     this.attachShadow({ mode: "open" });
   }
 
   set agentContact(value) {
     console.log("agentContact setter fired:", value);
-    this._agentContact = value;
-
-    // Start watching when we first get it
+    this._agentContact = value || null;
     this.watchForChanges();
   }
 
@@ -18,42 +18,68 @@ class AniHeaderButton extends HTMLElement {
     return this._agentContact;
   }
 
-getUserFound() {
-  const task = this.agentContact?.taskSelected;
+  set agent(value) {
+    this._agent = value || null;
+  }
 
-  return (
-    task?.callAssociatedData?.UserFound ??
-    task?.interaction?.callAssociatedData?.UserFound ??
-    null
-  );
-}
-  
+  get agent() {
+    return this._agent;
+  }
+
   connectedCallback() {
     this.render();
+  }
+
+  getUserFoundFromTask() {
+    const task = this._agentContact?.taskSelected;
+    const contact = this._agentContact?.contact;
+
+    return (
+      task?.callAssociatedData?.UserFound ??
+      task?.interaction?.callAssociatedData?.UserFound ??
+      task?.interactionControlCAD?.UserFound ??
+      contact?.callAssociatedData?.UserFound ??
+      null
+    );
+  }
+
+  getAniFromTask() {
+    const task = this._agentContact?.taskSelected;
+    const contact = this._agentContact?.contact;
+
+    return (
+      task?.ani ||
+      task?.interaction?.ani ||
+      task?.customerNumber ||
+      contact?.ani ||
+      contact?.customerNumber ||
+      ""
+    );
   }
 
   watchForChanges() {
     if (!this._agentContact) return;
 
-    // Polling approach (safe + simple)
-    this._interval && clearInterval(this._interval);
+    if (this._interval) {
+      clearInterval(this._interval);
+    }
 
     this._interval = setInterval(() => {
-      const task = this._agentContact?.taskSelected;
-      const contact = this._agentContact?.contact;
+      const ani = this.getAniFromTask();
+      const userFound = this.getUserFoundFromTask();
 
-      const ani =
-        task?.ani ||
-        task?.interaction?.ani ||
-        task?.customerNumber ||
-        contact?.ani ||
-        contact?.customerNumber ||
-        "";
-
-      if (ani && ani !== this._ani) {
-        this._ani = ani;
+      if (ani !== this._ani) {
+        this._ani = ani || "";
         console.log("ANI updated:", this._ani);
-        console.log("UserFound:", this.userFound);
+      }
+
+      if (userFound !== this._userFound) {
+        this._userFound = userFound;
+        console.log("UserFound updated:", this._userFound);
+        console.log("taskSelected:", this._agentContact?.taskSelected);
+        console.log("task CAD:", this._agentContact?.taskSelected?.callAssociatedData);
+        console.log("interaction CAD:", this._agentContact?.taskSelected?.interaction?.callAssociatedData);
+        console.log("interactionControlCAD:", this._agentContact?.interactionControlCAD);
       }
     }, 500);
   }
@@ -85,13 +111,17 @@ getUserFound() {
       <button id="aniBtn">Show ANI</button>
     `;
 
-    this.shadowRoot.getElementById("aniBtn")
-      .addEventListener("click", () => {
-          const userFound = this.getUserFound();
+    this.shadowRoot.getElementById("aniBtn").addEventListener("click", () => {
+      alert(
+        `ANI / Phone Number: ${this._ani || "No ANI available"}\nUserFound: ${this._userFound ?? "null"}`
+      );
+    });
+  }
 
-        console.log("userFound", userFound);
-        alert(`ANI / Phone Number: ${this._ani || "No ANI available"}`);
-      });
+  disconnectedCallback() {
+    if (this._interval) {
+      clearInterval(this._interval);
+    }
   }
 }
 
