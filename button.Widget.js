@@ -48,6 +48,8 @@ class AniHeaderButton extends HTMLElement {
 
     this.shadowRoot.getElementById("aniBtn")
       .addEventListener("click", () => {
+        console.log("THIS", this);
+        
         const value =
           this._ani && !String(this._ani).startsWith("$STORE")
             ? this._ani
