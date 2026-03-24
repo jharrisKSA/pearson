@@ -1,22 +1,22 @@
 class AniHeaderButton extends HTMLElement {
-  static get observedAttributes() {
-    return ["ani"];
-  }
-
   constructor() {
     super();
     this._ani = "";
     this.attachShadow({ mode: "open" });
   }
 
-  connectedCallback() {
-    this.render();
+  // 👇 THIS IS THE KEY PART
+  set ani(value) {
+    this._ani = value || "";
+    this.updateDisplay();
   }
 
-  attributeChangedCallback(name, oldValue, newValue) {
-    if (name === "ani") {
-      this._ani = newValue || "";
-    }
+  get ani() {
+    return this._ani;
+  }
+
+  connectedCallback() {
+    this.render();
   }
 
   render() {
@@ -26,7 +26,6 @@ class AniHeaderButton extends HTMLElement {
           display: flex;
           align-items: center;
           height: 64px;
-          box-sizing: border-box;
           font-family: inherit;
         }
 
@@ -37,7 +36,6 @@ class AniHeaderButton extends HTMLElement {
           border-radius: 6px;
           background: white;
           cursor: pointer;
-          font-size: 14px;
         }
 
         button:hover {
@@ -45,17 +43,23 @@ class AniHeaderButton extends HTMLElement {
         }
       </style>
 
-      <button id="aniBtn" type="button">Show ANI</button>
+      <button id="aniBtn">Show ANI</button>
     `;
 
-    this.shadowRoot.getElementById("aniBtn").addEventListener("click", () => {
-      const value = this._ani && !this._ani.startsWith("$STORE")
-        ? this._ani
-        : "No ANI available";
+    this.shadowRoot.getElementById("aniBtn")
+      .addEventListener("click", () => {
+        const value =
+          this._ani && !String(this._ani).startsWith("$STORE")
+            ? this._ani
+            : "No ANI available";
 
-      alert(`ANI / Phone Number: ${value}`);
-      console.log(this.getAttribute("ani"));
-    });
+        alert(`ANI / Phone Number: ${value}`);
+      });
+  }
+
+  updateDisplay() {
+    // Optional: log to verify updates
+    console.log("ANI updated:", this._ani);
   }
 }
 
