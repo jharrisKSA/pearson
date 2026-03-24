@@ -89,6 +89,10 @@ class AniHeaderButton extends HTMLElement {
       console.log("window.agentx:", window.agentx);
       console.log("window.callingClient:", window.callingClient);
       console.log("window.webexService:", window.webexService);
+
+      console.log("agentx keys:", Object.keys(window.agentx || {}));
+      console.log("callingClient keys:", Object.keys(window.callingClient || {}));
+      console.log("webexService keys:", Object.keys(window.webexService || {}));
       
       alert(`ANI / Phone Number: ${this._ani || "No ANI available"}`);
     });
