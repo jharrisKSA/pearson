@@ -162,110 +162,72 @@ class AniHeaderButton extends HTMLElement {
           font-family: inherit;
         }
 
-        .contact-button {
-  --white: #ffe7ff;
-  --bg: #080808;
-  --radius: 100px;
-  outline: none;
-  cursor: pointer;
-  border: 0;
-  position: relative;
-  border-radius: var(--radius);
-  background-color: var(--bg);
-  transition: all 0.2s ease;
-  box-shadow:
-    inset 0 0.3rem 0.9rem rgba(255, 255, 255, 0.3),
-    inset 0 -0.1rem 0.3rem rgba(0, 0, 0, 0.7),
-    inset 0 -0.4rem 0.9rem rgba(255, 255, 255, 0.5),
-    0 3rem 3rem rgba(0, 0, 0, 0.3),
-    0 1rem 1rem -0.6rem rgba(0, 0, 0, 0.8);
-}
-.contact-button .wrap {
-  font-size: 25px;
-  font-weight: 500;
-  color: rgba(255, 255, 255, 0.7);
-  padding: 32px 45px;
-  border-radius: inherit;
-  position: relative;
-  overflow: hidden;
-}
-.contact-button .wrap p span:nth-child(2) {
-  display: none;
-}
-.contact-button:hover .wrap p span:nth-child(1) {
-  display: none;
-}
-.contact-button:hover .wrap p span:nth-child(2) {
-  display: inline-block;
-}
-.contact-button .wrap p {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  margin: 0;
-  transition: all 0.2s ease;
-  transform: translateY(2%);
-  mask-image: linear-gradient(to bottom, white 40%, transparent);
-}
-.contact-button .wrap::before,
-.contact-button .wrap::after {
-  content: "";
-  position: absolute;
-  transition: all 0.3s ease;
-}
-.contact-button .wrap::before {
-  left: -15%;
-  right: -15%;
-  bottom: 25%;
-  top: -100%;
-  border-radius: 50%;
-  background-color: rgba(255, 255, 255, 0.12);
-}
-.contact-button .wrap::after {
-  left: 6%;
-  right: 6%;
-  top: 12%;
-  bottom: 40%;
-  border-radius: 22px 22px 0 0;
-  box-shadow: inset 0 10px 8px -10px rgba(255, 255, 255, 0.8);
-  background: linear-gradient(
-    180deg,
-    rgba(255, 255, 255, 0.3) 0%,
-    rgba(0, 0, 0, 0) 50%,
-    rgba(0, 0, 0, 0) 100%
-  );
-}
-.contact-button:hover {
-  box-shadow:
-    inset 0 0.3rem 0.5rem rgba(255, 255, 255, 0.4),
-    inset 0 -0.1rem 0.3rem rgba(0, 0, 0, 0.7),
-    inset 0 -0.4rem 0.9rem rgba(255, 255, 255, 0.7),
-    0 3rem 3rem rgba(0, 0, 0, 0.3),
-    0 1rem 1rem -0.6rem rgba(0, 0, 0, 0.8);
-}
-.contact-button:hover .wrap::before {
-  transform: translateY(-5%);
-}
-.contact-button:hover .wrap::after {
-  opacity: 0.4;
-  transform: translateY(5%);
-}
-.contact-button:hover .wrap p {
-  transform: translateY(-4%);
-}
-.contact-button:active {
-  transform: translateY(4px);
-  box-shadow:
-    inset 0 0.3rem 0.5rem rgba(255, 255, 255, 0.5),
-    inset 0 -0.1rem 0.3rem rgba(0, 0, 0, 0.8),
-    inset 0 -0.4rem 0.9rem rgba(255, 255, 255, 0.4),
-    0 3rem 3rem rgba(0, 0, 0, 0.3),
-    0 1rem 1rem -0.6rem rgba(0, 0, 0, 0.8);
+        button.contact {
+ appearance: button;
+ background-color: #1899D6;
+ border: solid transparent;
+ border-radius: 16px;
+ border-width: 0 0 4px;
+ box-sizing: border-box;
+ color: #FFFFFF;
+ cursor: pointer;
+ display: inline-block;
+ font-size: 15px;
+ font-weight: 700;
+ letter-spacing: .8px;
+ line-height: 20px;
+ margin: 0;
+ outline: none;
+ overflow: visible;
+ padding: 13px 19px;
+ text-align: center;
+ text-transform: uppercase;
+ touch-action: manipulation;
+ transform: translateZ(0);
+ transition: filter .2s;
+ user-select: none;
+ -webkit-user-select: none;
+ vertical-align: middle;
+ white-space: nowrap;
 }
 
-      </style>
+button.contact:after {
+ background-clip: padding-box;
+ background-color: #1CB0F6;
+ border: solid transparent;
+ border-radius: 16px;
+ border-width: 0 0 4px;
+ bottom: -4px;
+ content: "";
+ left: 0;
+ position: absolute;
+ right: 0;
+ top: 0;
+ z-index: -1;
+}
 
-      <button id="btnAddContact" class="contact-button" style="display: none">Add Contact</button>
+button.contact:main, button.contact:focus {
+ user-select: auto;
+}
+
+button.contact:hover:not(:disabled) {
+ filter: brightness(1.1);
+}
+
+button.contact:disabled {
+ cursor: auto;
+}
+
+button.contact:active:after {
+ border-width: 0 0 0px;
+}
+
+button.contact:active {
+ padding-bottom: 10px;
+}
+     </style>
+
+      <button id="btnAddContact" class="contact" style="display: none">Add Contact</button>
     `;
 
     this._btn = this.shadowRoot.getElementById("btnAddContact");
