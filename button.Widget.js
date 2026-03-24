@@ -174,14 +174,14 @@ class AniHeaderButton extends HTMLElement {
  color: #FFFFFF;
  cursor: pointer;
  display: inline-block;
- font-size: 15px;
+ font-size: 13px;
  font-weight: 700;
  letter-spacing: .8px;
- line-height: 20px;
+ line-height: 15px;
  margin: 0;
  outline: none;
  overflow: visible;
- padding: 13px 19px;
+ padding: 6px 12px;
  text-align: center;
  text-transform: uppercase;
  touch-action: manipulation;
