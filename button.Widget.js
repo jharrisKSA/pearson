@@ -46,6 +46,8 @@ class AniHeaderButton extends HTMLElement {
     `;
 
     this.shadowRoot.getElementById("aniBtn").addEventListener("click", () => {
+      console.log("ANI", this.ani);
+      console.log("Agent Contact", this.agentContact);
       alert(`ANI / Phone Number: ${this.ani || "No ANI available"}`);
     });
   }
