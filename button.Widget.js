@@ -1,21 +1,22 @@
 class AniHeaderButton extends HTMLElement {
+  static get observedAttributes() {
+    return ["ani"];
+  }
+
   constructor() {
     super();
     this._ani = "";
     this.attachShadow({ mode: "open" });
   }
 
-  set ani(value) {
-    this._ani = value || "";
-    this.render();
-  }
-
-  get ani() {
-    return this._ani;
-  }
-
   connectedCallback() {
     this.render();
+  }
+
+  attributeChangedCallback(name, oldValue, newValue) {
+    if (name === "ani") {
+      this._ani = newValue || "";
+    }
   }
 
   render() {
@@ -44,13 +45,14 @@ class AniHeaderButton extends HTMLElement {
         }
       </style>
 
-      <button id="aniBtn" type="button" title="Show ANI">
-        Show ANI
-      </button>
+      <button id="aniBtn" type="button">Show ANI</button>
     `;
 
-    this.shadowRoot.getElementById("aniBtn")?.addEventListener("click", () => {
-      const value = this._ani || "No ANI available";
+    this.shadowRoot.getElementById("aniBtn").addEventListener("click", () => {
+      const value = this._ani && !this._ani.startsWith("$STORE")
+        ? this._ani
+        : "No ANI available";
+
       alert(`ANI / Phone Number: ${value}`);
     });
   }
