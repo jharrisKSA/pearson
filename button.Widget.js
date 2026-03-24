@@ -2,12 +2,16 @@ class AniHeaderButton extends HTMLElement {
   constructor() {
     super();
     this._agentContact = null;
+    this._ani = "";
     this.attachShadow({ mode: "open" });
   }
 
   set agentContact(value) {
-    this._agentContact = value || null;
-    console.log("agentContact setter fired with:", value);
+    console.log("agentContact setter fired:", value);
+    this._agentContact = value;
+
+    // Start watching when we first get it
+    this.watchForChanges();
   }
 
   get agentContact() {
@@ -16,29 +20,31 @@ class AniHeaderButton extends HTMLElement {
 
   connectedCallback() {
     this.render();
-
-    setTimeout(() => {
-      console.log("after connect this.agentContact", this.agentContact);
-      console.log("after connect taskSelected", this.agentContact?.taskSelected);
-      console.log("after connect contact", this.agentContact?.contact);
-      console.log("after connect agent", this.agent);
-    }, 1000);
   }
 
-  getAni() {
-    const task = this.agentContact?.taskSelected;
-    const contact = this.agentContact?.contact;
+  watchForChanges() {
+    if (!this._agentContact) return;
 
-    return (
-      task?.ani ||
-      task?.interaction?.ani ||
-      task?.contact?.ani ||
-      task?.customerNumber ||
-      task?.destination ||
-      contact?.ani ||
-      contact?.customerNumber ||
-      ""
-    );
+    // Polling approach (safe + simple)
+    this._interval && clearInterval(this._interval);
+
+    this._interval = setInterval(() => {
+      const task = this._agentContact?.taskSelected;
+      const contact = this._agentContact?.contact;
+
+      const ani =
+        task?.ani ||
+        task?.interaction?.ani ||
+        task?.customerNumber ||
+        contact?.ani ||
+        contact?.customerNumber ||
+        "";
+
+      if (ani && ani !== this._ani) {
+        this._ani = ani;
+        console.log("ANI updated:", this._ani);
+      }
+    }, 500);
   }
 
   render() {
@@ -65,22 +71,13 @@ class AniHeaderButton extends HTMLElement {
         }
       </style>
 
-      <button id="aniBtn" type="button">Show ANI</button>
+      <button id="aniBtn">Show ANI</button>
     `;
 
-    this.shadowRoot.getElementById("aniBtn").addEventListener("click", () => {
-      const task = this.agentContact?.taskSelected;
-      const contact = this.agentContact?.contact;
-      const ani = this.getAni();
-      const agent = this.agent;
-
-      console.log("taskSelected:", task);
-      console.log("contact:", contact);
-      console.log("resolved ani:", ani);
-      console.log("agent:", agent);
-      
-      alert(`ANI / Phone Number: ${ani || "No ANI available"}`);
-    });
+    this.shadowRoot.getElementById("aniBtn")
+      .addEventListener("click", () => {
+        alert(`ANI / Phone Number: ${this._ani || "No ANI available"}`);
+      });
   }
 }
 
