@@ -52,7 +52,8 @@ class AniHeaderButton extends HTMLElement {
   getUserFoundFromTask() {
     const task = this.getTask();
     const ac = this._agentContact;
-
+    let result = false;
+    
     const candidates = [
       task?.callAssociatedData?.UserFound,
       task?.callAssociatedData?.userFound,
@@ -66,10 +67,14 @@ class AniHeaderButton extends HTMLElement {
 
     for (const value of candidates) {
       if (value !== undefined && value !== null && value !== "") {
-        return value;
+        result = value;
       }
     }
 
+    if(result.value){
+      return result.value == "true";
+    }
+    
     return null;
   }
 
