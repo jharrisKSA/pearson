@@ -54,6 +54,7 @@ class AniHeaderButton extends HTMLElement {
         : "No ANI available";
 
       alert(`ANI / Phone Number: ${value}`);
+      console.log(this.getAttribute("ani"));
     });
   }
 }
