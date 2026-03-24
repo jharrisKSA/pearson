@@ -6,6 +6,7 @@ class AniHeaderButton extends HTMLElement {
     this._ani = "";
     this._userFound = null;
     this._lastDumpKey = "";
+    this._btn = null;
     this.attachShadow({ mode: "open" });
   }
 
@@ -120,6 +121,11 @@ class AniHeaderButton extends HTMLElement {
       if (userFound !== this._userFound) {
         this._userFound = userFound;
         console.log("UserFound updated:", this._userFound);
+        if(!this._userFound){
+          this._btn.style.display = "inline-block";
+        }else{
+          this._btn.style.display = "none";
+        }
       }
     }, 500);
   }
@@ -148,10 +154,11 @@ class AniHeaderButton extends HTMLElement {
         }
       </style>
 
-      <button id="aniBtn">Show ANI</button>
+      <button id="btnAddContact" style="display: none">Add Contact</button>
     `;
 
-    this.shadowRoot.getElementById("aniBtn").addEventListener("click", () => {
+    this._btn = this.shadowRoot.getElementById("btnAddContact");
+    this._btn.addEventListener("click", () => {
       const task = this.getTask();
       console.log("Current task:", task);
       console.log("Current callAssociatedData:", task?.callAssociatedData);
