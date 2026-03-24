@@ -19,6 +19,7 @@ class AniHeaderButton extends HTMLElement {
 
     setTimeout(() => {
       console.log("after connect this.ani:", this.ani);
+      console.log("after connect this.agentContact", this.agentContact);
       console.log("after connect getAttribute('ani'):", this.getAttribute("ani"));
     }, 1000);
   }
