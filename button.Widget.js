@@ -1,27 +1,52 @@
 class AniHeaderButton extends HTMLElement {
   constructor() {
     super();
-    this._ani = "";
+    this._agentContact = null;
+    this._agent = null;
     this.attachShadow({ mode: "open" });
   }
 
-  set ani(value) {
-    console.log("setter ani fired with:", value);
-    this._ani = value || "";
+  set agentContact(value) {
+    console.log("agentContact setter fired with:", value);
+    this._agentContact = value || null;
   }
 
-  get ani() {
-    return this._ani;
+  get agentContact() {
+    return this._agentContact;
+  }
+
+  set agent(value) {
+    console.log("agent setter fired with:", value);
+    this._agent = value || null;
+  }
+
+  get agent() {
+    return this._agent;
   }
 
   connectedCallback() {
     this.render();
 
     setTimeout(() => {
-      console.log("after connect this.ani:", this.ani);
-      console.log("after connect this.agentContact", this.agentContact);
-      console.log("after connect getAttribute('ani'):", this.getAttribute("ani"));
+      console.log("after connect this.agentContact:", this.agentContact);
+      console.log("after connect this.agent:", this.agent);
     }, 1000);
+  }
+
+  getAni() {
+    const ac = this.agentContact;
+    const task = ac?.taskSelected;
+    const contact = ac?.contact;
+
+    return (
+      task?.ani ||
+      task?.interaction?.ani ||
+      task?.contact?.ani ||
+      task?.customerNumber ||
+      contact?.ani ||
+      contact?.customerNumber ||
+      ""
+    );
   }
 
   render() {
@@ -42,14 +67,23 @@ class AniHeaderButton extends HTMLElement {
           background: white;
           cursor: pointer;
         }
+
+        button:hover {
+          background: #f4f4f4;
+        }
       </style>
+
       <button id="aniBtn" type="button">Show ANI</button>
     `;
 
     this.shadowRoot.getElementById("aniBtn").addEventListener("click", () => {
-      console.log("ANI", this.ani);
-      console.log("Agent Contact", this.agentContact);
-      alert(`ANI / Phone Number: ${this.ani || "No ANI available"}`);
+      const ani = this.getAni();
+
+      console.log("taskSelected:", this.agentContact?.taskSelected);
+      console.log("contact:", this.agentContact?.contact);
+      console.log("resolved ani:", ani);
+
+      alert(`ANI / Phone Number: ${ani || "No ANI available"}`);
     });
   }
 }
