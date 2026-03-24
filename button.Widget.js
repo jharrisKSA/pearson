@@ -43,6 +43,7 @@ class AniHeaderButton extends HTMLElement {
       if (ani && ani !== this._ani) {
         this._ani = ani;
         console.log("ANI updated:", this._ani);
+        console.log("UserFound:", this.userFound);
       }
     }, 500);
   }
