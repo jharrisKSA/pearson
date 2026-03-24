@@ -5,6 +5,7 @@ class AniHeaderButton extends HTMLElement {
     this._agent = null;
     this._ani = "";
     this._userFound = null;
+    this._lastDumpKey = "";
     this.attachShadow({ mode: "open" });
   }
 
@@ -30,21 +31,12 @@ class AniHeaderButton extends HTMLElement {
     this.render();
   }
 
-  getUserFoundFromTask() {
-    const task = this._agentContact?.taskSelected;
-    const contact = this._agentContact?.contact;
-
-    return (
-      task?.callAssociatedData?.UserFound ??
-      task?.interaction?.callAssociatedData?.UserFound ??
-      task?.interactionControlCAD?.UserFound ??
-      contact?.callAssociatedData?.UserFound ??
-      null
-    );
+  getTask() {
+    return this._agentContact?.taskSelected || null;
   }
 
   getAniFromTask() {
-    const task = this._agentContact?.taskSelected;
+    const task = this.getTask();
     const contact = this._agentContact?.contact;
 
     return (
@@ -57,6 +49,48 @@ class AniHeaderButton extends HTMLElement {
     );
   }
 
+  getUserFoundFromTask() {
+    const task = this.getTask();
+    const ac = this._agentContact;
+
+    const candidates = [
+      task?.callAssociatedData?.UserFound,
+      task?.callAssociatedData?.userFound,
+      task?.interaction?.callAssociatedData?.UserFound,
+      task?.interaction?.callAssociatedData?.userFound,
+      task?.cadVariables?.UserFound,
+      task?.cadVariables?.userFound,
+      ac?.interactionControlCAD?.UserFound,
+      ac?.interactionControlCAD?.userFound
+    ];
+
+    for (const value of candidates) {
+      if (value !== undefined && value !== null && value !== "") {
+        return value;
+      }
+    }
+
+    return null;
+  }
+
+  dumpTaskData(task) {
+    const dump = {
+      taskKeys: task ? Object.keys(task) : [],
+      callAssociatedData: task?.callAssociatedData ?? null,
+      interactionCallAssociatedData: task?.interaction?.callAssociatedData ?? null,
+      cadVariables: task?.cadVariables ?? null,
+      interactionControlCAD: this._agentContact?.interactionControlCAD ?? null,
+      contact: this._agentContact?.contact ?? null
+    };
+
+    const dumpKey = JSON.stringify(dump);
+
+    if (dumpKey !== this._lastDumpKey) {
+      this._lastDumpKey = dumpKey;
+      console.log("DEBUG task dump:", dump);
+    }
+  }
+
   watchForChanges() {
     if (!this._agentContact) return;
 
@@ -65,8 +99,13 @@ class AniHeaderButton extends HTMLElement {
     }
 
     this._interval = setInterval(() => {
+      const task = this.getTask();
       const ani = this.getAniFromTask();
       const userFound = this.getUserFoundFromTask();
+
+      if (task) {
+        this.dumpTaskData(task);
+      }
 
       if (ani !== this._ani) {
         this._ani = ani || "";
@@ -76,10 +115,6 @@ class AniHeaderButton extends HTMLElement {
       if (userFound !== this._userFound) {
         this._userFound = userFound;
         console.log("UserFound updated:", this._userFound);
-        console.log("taskSelected:", this._agentContact?.taskSelected);
-        console.log("task CAD:", this._agentContact?.taskSelected?.callAssociatedData);
-        console.log("interaction CAD:", this._agentContact?.taskSelected?.interaction?.callAssociatedData);
-        console.log("interactionControlCAD:", this._agentContact?.interactionControlCAD);
       }
     }, 500);
   }
@@ -112,6 +147,13 @@ class AniHeaderButton extends HTMLElement {
     `;
 
     this.shadowRoot.getElementById("aniBtn").addEventListener("click", () => {
+      const task = this.getTask();
+      console.log("Current task:", task);
+      console.log("Current callAssociatedData:", task?.callAssociatedData);
+      console.log("Current interaction callAssociatedData:", task?.interaction?.callAssociatedData);
+      console.log("Current cadVariables:", task?.cadVariables);
+      console.log("Current interactionControlCAD:", this._agentContact?.interactionControlCAD);
+
       alert(
         `ANI / Phone Number: ${this._ani || "No ANI available"}\nUserFound: ${this._userFound ?? "null"}`
       );
