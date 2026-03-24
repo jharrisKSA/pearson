@@ -18,6 +18,16 @@ class AniHeaderButton extends HTMLElement {
     return this._agentContact;
   }
 
+getUserFound() {
+  const task = this.agentContact?.taskSelected;
+
+  return (
+    task?.callAssociatedData?.UserFound ??
+    task?.interaction?.callAssociatedData?.UserFound ??
+    null
+  );
+}
+  
   connectedCallback() {
     this.render();
   }
@@ -77,6 +87,9 @@ class AniHeaderButton extends HTMLElement {
 
     this.shadowRoot.getElementById("aniBtn")
       .addEventListener("click", () => {
+          const userFound = this.getUserFound();
+
+        console.log("userFound", userFound);
         alert(`ANI / Phone Number: ${this._ani || "No ANI available"}`);
       });
   }
